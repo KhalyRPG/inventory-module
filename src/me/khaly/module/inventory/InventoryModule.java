@@ -1,11 +1,11 @@
-package me.khaly.module;
+package me.khaly.module.inventory;
 
 import me.khaly.core.module.Module;
 
-public class ModuleExample extends Module {
+public class InventoryModule extends Module {
 
-	public ModuleExample() {
-		super("Display Name", "module-example", 0.1F);
+	public InventoryModule() {
+		super("Inventory", "inventory", 0.1F);
 	}
 
 	@Override
