@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.khaly.core.builder.ItemBuilder;
+import me.khaly.core.enums.AccessoryType;
 import me.khaly.core.user.User;
 import me.khaly.module.inventory.InventoryModule;
 
@@ -18,11 +19,14 @@ public abstract class InventorySlot {
 	private int inventorySlot;
 	private BiPredicate<User, InventoryClickEvent> onAction;
 	private BiConsumer<User, ItemStack> onRemove;
+	private AccessoryType type;
 	
-	public InventorySlot(ItemBuilder defaultItem, String id, int inventorySlot) {
+	public InventorySlot(ItemBuilder defaultItem, String id, int inventorySlot, AccessoryType type) {
 		this.defaultItem = defaultItem;
 		this.inventorySlot = inventorySlot;
 		this.id = id;
+		this.type = type;
+		
 		this.setAction((user, event) -> {
 			return true;
 		});
@@ -52,6 +56,10 @@ public abstract class InventorySlot {
 	
 	public String getId() {
 		return id;
+	}
+	
+	public AccessoryType getType() {
+		return type;
 	}
 	
 	public ItemStack getDefaultItemStack() {

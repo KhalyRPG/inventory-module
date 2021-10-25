@@ -10,7 +10,7 @@ public class BackpackSlot extends InventorySlot {
 	public BackpackSlot() {
 		super(new ItemBuilder(Material.INK_SACK, 1, (short)	7) {{
 			setName("&aMochila");
-		}}, "backpack_1", 13);
+		}}, "backpack_1", 13, null);
 		
 		this.setAction((user, event) -> {
 			user.sendMessage("&cNot yet.");

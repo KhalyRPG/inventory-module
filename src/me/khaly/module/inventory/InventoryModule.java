@@ -18,6 +18,7 @@ import org.bukkit.inventory.PlayerInventory;
 import me.khaly.core.api.events.UserJoinEvent;
 import me.khaly.core.module.Module;
 import me.khaly.core.user.User;
+import me.khaly.core.util.ItemUtils;
 import me.khaly.module.inventory.items.BackpackSlot;
 import me.khaly.module.inventory.items.BraceletSlot;
 import me.khaly.module.inventory.items.CollarSlot;
@@ -91,6 +92,11 @@ public class InventoryModule extends Module implements Listener {
 					event.setCancelled(true);
 				} else {
 					if(inventorySlot.isDefaultItem(item) && cursor != null) {
+						if(!ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
+							event.setCancelled(true);
+							return;
+						}
+						
 						inventory.setItem(slot, cursor);
 						player.setItemOnCursor(null);
 					} else if(!inventorySlot.isDefaultItem(item) && cursor == null) {
@@ -98,6 +104,11 @@ public class InventoryModule extends Module implements Listener {
 						inventory.setItem(slot, inventorySlot.getDefaultItemStack());
 						inventorySlot.onRemove().accept(user, item);
 					} else if(!inventorySlot.isDefaultItem(item) && cursor != null) {
+						if(!ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
+							event.setCancelled(true);
+							return;
+						}
+						
 						player.setItemOnCursor(item);
 						inventory.setItem(slot, cursor);
 						inventorySlot.onRemove().accept(user, item);
