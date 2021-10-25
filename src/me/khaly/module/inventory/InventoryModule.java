@@ -27,10 +27,10 @@ import me.khaly.module.inventory.items.RingSecondSlot;
 import me.khaly.module.inventory.items.object.InventorySlot;
 
 public class InventoryModule extends Module implements Listener {
-	
+
 	private Map<Integer, InventorySlot> items;
 	private static InventoryModule instance;
-	
+
 	public InventoryModule() {
 		super("Inventory", "inventory", 0.1F);
 		this.items = new ConcurrentHashMap<>();
@@ -39,46 +39,39 @@ public class InventoryModule extends Module implements Listener {
 	@Override
 	public void load() {
 		instance = this;
-		
-		Arrays.asList(
-				new RingFirstSlot(),
-				new RingSecondSlot(),
-				new BraceletSlot(),
-				new CollarSlot(),
-				new BackpackSlot()
-			).forEach(slot -> {
-				slot.register();
-			});
-		
+
+		Arrays.asList(new RingFirstSlot(), new RingSecondSlot(), new BraceletSlot(), new CollarSlot(),
+				new BackpackSlot()).forEach(slot -> {
+					slot.register();
+				});
+
 	}
-	
+
 	public Map<Integer, InventorySlot> getItems() {
 		return items;
 	}
-	
+
 	public static InventoryModule getInstance() {
 		return instance;
 	}
-		
+
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		if(event.getClickedInventory() == null ||
-				event.getInventory() == null || 
-				event.getAction() == InventoryAction.NOTHING ||
-				event.isCancelled() ||
-				event.getClickedInventory().getType() != InventoryType.PLAYER) {
+		if (event.getClickedInventory() == null || event.getInventory() == null
+				|| event.getAction() == InventoryAction.NOTHING || event.isCancelled()
+				|| event.getClickedInventory().getType() != InventoryType.PLAYER) {
 			return;
 		}
-		
+
 		HumanEntity player = event.getWhoClicked();
 		int slot = event.getSlot();
 		User user = getProvider().getUser((Player) player);
 		InventorySlot inventorySlot = items.get(slot);
 
-		if(inventorySlot == null) {
+		if (inventorySlot == null) {
 			return;
 		}
-		
+
 		if (inventorySlot.isChangableItem()) {
 			PlayerInventory inventory = user.getBukkitPlayer().getInventory();
 			ItemStack cursor = event.getCursor();
@@ -88,27 +81,27 @@ public class InventoryModule extends Module implements Listener {
 				event.getWhoClicked().setItemOnCursor(item);
 				inventory.setItem(slot, inventorySlot.getDefaultItemStack());
 			} else {
-				if((cursor == null || cursor.getType() == Material.AIR) && inventorySlot.isDefaultItem(item)) {
+				if ((cursor == null || cursor.getType() == Material.AIR) && inventorySlot.isDefaultItem(item)) {
 					event.setCancelled(true);
 				} else {
-					if(inventorySlot.isDefaultItem(item) && cursor != null) {
-						if(!ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
+					if (inventorySlot.isDefaultItem(item) && cursor != null) {
+						if (!ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
 							event.setCancelled(true);
 							return;
 						}
-						
+
 						inventory.setItem(slot, cursor);
 						player.setItemOnCursor(null);
-					} else if(!inventorySlot.isDefaultItem(item) && cursor == null) {
+					} else if (!inventorySlot.isDefaultItem(item) && cursor == null) {
 						player.setItemOnCursor(item);
 						inventory.setItem(slot, inventorySlot.getDefaultItemStack());
 						inventorySlot.onRemove().accept(user, item);
-					} else if(!inventorySlot.isDefaultItem(item) && cursor != null) {
-						if(!ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
+					} else if (!inventorySlot.isDefaultItem(item) && cursor != null) {
+						if (!ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
 							event.setCancelled(true);
 							return;
 						}
-						
+
 						player.setItemOnCursor(item);
 						inventory.setItem(slot, cursor);
 						inventorySlot.onRemove().accept(user, item);
@@ -118,19 +111,20 @@ public class InventoryModule extends Module implements Listener {
 				}
 			}
 		}
-		
+
 		event.setCancelled(inventorySlot.onAction().test(user, event));
 	}
-	
+
 	@EventHandler
 	public void onJoin(UserJoinEvent event) {
 		PlayerInventory inventory = event.getPlayer().getInventory();
-		
-		for(Map.Entry<Integer, InventorySlot> entry : items.entrySet()) {
+
+		for (Map.Entry<Integer, InventorySlot> entry : items.entrySet()) {
 			int slot = entry.getKey();
 			InventorySlot inventorySlot = entry.getValue();
-			
-			if(inventory.getItem(slot) == null || inventory.getItem(slot).getType() == Material.AIR) {
+
+			if ((inventory.getItem(slot) == null || inventory.getItem(slot).getType() == Material.AIR)
+					|| (!inventorySlot.isChangableItem() && inventorySlot.isDefaultItem(inventory.getItem(slot)))) {
 				inventory.setItem(slot, inventorySlot.getDefaultItemStack());
 			}
 		}
