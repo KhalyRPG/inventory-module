@@ -9,7 +9,7 @@ import me.khaly.module.inventory.items.object.InventorySlot;
 public class RingSecondSlot extends InventorySlot {
 
 	public RingSecondSlot() {
-		super(new ItemBuilder(Material.INK_SACK, 2, (short)7) {{
+		super(new ItemBuilder(Material.INK_SACK, 2, (short)8) {{
 			setName("&cRanura para anillo #2");
 		}}, "ring_2", 10, AccessoryType.RING);
 
