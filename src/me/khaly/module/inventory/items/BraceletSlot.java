@@ -12,6 +12,8 @@ public class BraceletSlot extends InventorySlot {
 		super(new ItemBuilder(Material.INK_SACK, 1, (short)	8) {{
 			setName("&cRanura para pulsera");
 		}}, "bracelet_1", 11, AccessoryType.BRACELET);
+		
+		this.setChangableItem(true);
 	}
 
 }

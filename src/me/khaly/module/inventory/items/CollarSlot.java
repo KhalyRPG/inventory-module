@@ -12,6 +12,8 @@ public class CollarSlot extends InventorySlot {
 		super(new ItemBuilder(Material.INK_SACK, 1, (short)	8) {{
 			setName("&cRanura para collar");
 		}}, "collar_1", 12, AccessoryType.COLLAR);
+		
+		this.setChangableItem(true);
 	}
 
 }
