@@ -44,10 +44,15 @@ public class InventoryModule extends Module implements Listener {
 	public void load() {
 		instance = this;
 
-		Arrays.asList(new RingFirstSlot(), new RingSecondSlot(), new BraceletSlot(), new CollarSlot(),
-				new BackpackSlot()).forEach(slot -> {
-					slot.register();
-				});
+		Arrays.asList(
+				new RingFirstSlot(), 
+				new RingSecondSlot(), 
+				new BraceletSlot(), 
+				new CollarSlot(),
+				new BackpackSlot()
+			).forEach(slot -> {
+				slot.register();
+			});
 
 	}
 
@@ -80,14 +85,15 @@ public class InventoryModule extends Module implements Listener {
 			PlayerInventory inventory = user.getBukkitPlayer().getInventory();
 			ItemStack cursor = event.getCursor();
 			ItemStack item = inventory.getItem(inventorySlot.getInventorySlot());
-
-			if (((cursor == null || cursor.getType() == Material.AIR) && inventorySlot.isDefaultItem(item))
-					|| !ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
-				event.setCancelled(true);
-				return;
-			}
-
+			
+			player.sendMessage("Ñe: " + slot);
+			
 			if (inventorySlot.isDefaultItem(item) && cursor != null) {
+				if(!ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
+					event.setCancelled(true);
+					return;
+				}
+				
 				inventory.setItem(slot, cursor);
 				player.setItemOnCursor(null);
 			} else if (!inventorySlot.isDefaultItem(item) && cursor == null) {
@@ -95,9 +101,8 @@ public class InventoryModule extends Module implements Listener {
 				inventory.setItem(slot, inventorySlot.getDefaultItemStack());
 				inventorySlot.onRemove().accept(user, item);
 			} else if (!inventorySlot.isDefaultItem(item) && cursor != null) {
-				if (!ItemUtils.isType(cursor, inventorySlot.getType().getType())
-						|| !ItemUtils.isType(item, inventorySlot.getType().getType())) {
-
+				if (!ItemUtils.isType(cursor, inventorySlot.getType().getType())) {
+					event.setCancelled(true);
 					return;
 				}
 
@@ -106,13 +111,13 @@ public class InventoryModule extends Module implements Listener {
 				inventorySlot.onRemove().accept(user, item);
 			} else {
 				player.sendMessage("§cW-what? ._.");
-				event.setCancelled(true);
 			}
 			/*
 			 * if (!inventorySlot.isDefaultItem(item)) {
 			 * event.getWhoClicked().setItemOnCursor(item); inventory.setItem(slot,
 			 * inventorySlot.getDefaultItemStack()); }
 			 */
+			event.setCancelled(true);
 		}
 
 		event.setCancelled(inventorySlot.onAction().test(user, event));
@@ -136,7 +141,7 @@ public class InventoryModule extends Module implements Listener {
 	}
 
 	private void setupModifiers(User user, StatAttribute... attributes) {
-
+		
 		for (StatAttribute attribute : attributes) {
 			StatModifier modifier = new StatModifier("accessories", (value) -> {
 				Collection<InventorySlot> slots = getItems().values();
